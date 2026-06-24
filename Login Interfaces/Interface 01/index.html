@@ -1,1 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome Home - Access</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #1a45d0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        /* Container Entry Animation */
+        @keyframes containerEntry {
+            0% {
+                opacity: 0;
+                transform: scale(0.96) translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 45px;
+            width: 950px;
+            max-width: 95%;
+            height: 620px;
+            position: relative;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            opacity: 0;
+            animation: containerEntry 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* Forms Panel */
+        .forms-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50%;
+            height: 100%;
+            transition: transform 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+            z-index: 5;
+        }
+
+        .container.active .forms-container {
+            transform: translateX(100%);
+        }
+
+        .form-box {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 50px;
+            box-sizing: border-box;
+            transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s;
+        }
+
+        .login-box {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translateX(0);
+        }
+
+        .container.active .login-box {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transform: translateX(-40px);
+        }
+
+        .register-box {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transform: translateX(40px);
+        }
+
+        .container.active .register-box {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translateX(0);
+        }
+
+        .form-box form {
+            width: 100%;
+            max-width: 360px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Staggered Form Elements Fade-In */
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-box form > * {
+            opacity: 0;
+        }
+
+        .container:not(.active) .login-box form > * {
+            animation: fadeInUp 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        .container.active .register-box form > * {
+            animation: fadeInUp 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        .form-box form > *:nth-child(1) { animation-delay: 0.1s; }
+        .form-box form > *:nth-child(2) { animation-delay: 0.16s; }
+        .form-box form > *:nth-child(3) { animation-delay: 0.22s; }
+        .form-box form > *:nth-child(4) { animation-delay: 0.28s; }
+        .form-box form > *:nth-child(5) { animation-delay: 0.34s; }
+        .form-box form > *:nth-child(6) { animation-delay: 0.4s; }
+        .form-box form > *:nth-child(7) { animation-delay: 0.46s; }
+
+        /* Header Style */
+        .header-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 28px;
+            text-align: center;
+        }
+
+        .header-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+            transition: transform 0.3s ease;
+        }
+        
+        .form-box:hover .header-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .form-box h2 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #111827;
+            margin: 0 0 6px 0;
+            letter-spacing: -0.5px;
+        }
+
+        .form-box .subtitle {
+            font-size: 13.5px;
+            color: #6b7280;
+            margin: 0;
+            font-weight: 400;
+        }
+
+        /* Input Styles */
+        .input-group {
+            position: relative;
+            width: 100%;
+            margin-bottom: 16px;
+        }
+
+        .input-group input {
+            width: 100%;
+            height: 48px;
+            padding: 0 20px;
+            padding-right: 48px;
+            border: 1px solid #e5e7eb;
+            border-radius: 24px;
+            font-size: 14px;
+            color: #1f2937;
+            outline: none;
+            transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+            background-color: #fff;
+            box-sizing: border-box;
+        }
+
+        .input-group input::placeholder {
+            color: #9ca3af;
+        }
+
+        .input-group input:focus {
+            border-color: #1a45d0;
+            box-shadow: 0 0 0 4px rgba(26, 69, 208, 0.1);
+        }
+
+        .input-group .input-icon,
+        .input-group .password-toggle {
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-size: 15px;
+            pointer-events: none;
+            transition: color 0.25s ease, transform 0.25s ease;
+        }
+
+        .input-group .password-toggle {
+            pointer-events: auto;
+            cursor: pointer;
+        }
+
+        /* Input icon focus effect */
+        .input-group input:focus ~ .input-icon,
+        .input-group input:focus ~ .password-toggle {
+            color: #1a45d0;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        /* Form Options Row */
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin: 2px 0 24px 0;
+            font-size: 12.5px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            color: #4b5563;
+            user-select: none;
+        }
+
+        .remember-me input {
+            display: none;
+        }
+
+        .checkmark {
+            width: 16px;
+            height: 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            margin-right: 8px;
+            display: inline-block;
+            position: relative;
+            transition: all 0.25s ease;
+            background-color: #fff;
+            box-sizing: border-box;
+        }
+
+        .remember-me input:checked ~ .checkmark {
+            background-color: #1a45d0;
+            border-color: #1a45d0;
+        }
+
+        .checkmark::after {
+            content: "";
+            position: absolute;
+            left: 4.5px;
+            top: 1.5px;
+            width: 4px;
+            height: 7px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg) scale(0);
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .remember-me input:checked ~ .checkmark::after {
+            transform: rotate(45deg) scale(1);
+        }
+
+        .forgot-link {
+            color: #6b7280;
+            text-decoration: none;
+            transition: color 0.25s ease;
+            font-weight: 500;
+            position: relative;
+        }
+
+        .forgot-link::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            transform: scaleX(0);
+            height: 1.5px;
+            bottom: -2px;
+            left: 0;
+            background-color: #1a45d0;
+            transform-origin: bottom right;
+            transition: transform 0.25s ease-out;
+        }
+
+        .forgot-link:hover {
+            color: #1a45d0;
+        }
+
+        .forgot-link:hover::after {
+            transform: scaleX(1);
+            transform-origin: bottom left;
+        }
+
+        /* Button Styling */
+        .btn-primary {
+            width: 100%;
+            height: 48px;
+            border: none;
+            border-radius: 24px;
+            background-color: #1a45d0;
+            color: #fff;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(26, 69, 208, 0.15);
+        }
+
+        .btn-primary:hover {
+            background-color: #1437a8;
+            box-shadow: 0 8px 20px rgba(26, 69, 208, 0.25);
+            transform: translateY(-1.5px);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        /* Navigation link footer */
+        .toggle-text {
+            font-size: 13px;
+            color: #6b7280;
+            text-align: center;
+            width: 100%;
+            margin-top: 24px;
+        }
+
+        .toggle-text a {
+            color: #1a45d0;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.25s ease;
+            margin-left: 4px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .toggle-text a::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            transform: scaleX(0);
+            height: 1.5px;
+            bottom: -2px;
+            left: 0;
+            background-color: #1a45d0;
+            transform-origin: bottom right;
+            transition: transform 0.25s ease-out;
+        }
+
+        .toggle-text a:hover {
+            color: #1437a8;
+        }
+
+        .toggle-text a:hover::after {
+            transform: scaleX(1);
+            transform-origin: bottom left;
+            background-color: #1437a8;
+        }
+
+        /* Illustration Card */
+        .illustration-container {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 50%;
+            height: 100%;
+            padding: 15px;
+            box-sizing: border-box;
+            transition: transform 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+            z-index: 10;
+        }
+
+        .container.active .illustration-container {
+            transform: translateX(-100%);
+        }
+
+        .illustration-card {
+            width: 100%;
+            height: 100%;
+            border-radius: 35px;
+            background-image: url('blue_fluid_art.png');
+            background-size: cover;
+            background-position: 40% center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+            position: relative;
+            overflow: hidden;
+            transition: background-position 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .container.active .illustration-card {
+            background-position: 60% center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container" id="container">
+        <!-- Forms Panel (Left / Right switch) -->
+        <div class="forms-container">
+            <!-- Login Box -->
+            <div class="form-box login-box">
+                <form id="loginForm" onsubmit="event.preventDefault();">
+                    <div class="header-wrapper">
+                        <div class="header-icon">🏠</div>
+                        <h2>Welcome home</h2>
+                        <p class="subtitle">Please enter your details.</p>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="email" id="loginEmail" placeholder="Email" required autocomplete="email">
+                        <i class="fa-regular fa-envelope input-icon"></i>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="password" id="loginPassword" placeholder="Password" required autocomplete="current-password">
+                        <i class="fa-regular fa-eye-slash password-toggle" id="loginPasswordToggle"></i>
+                    </div>
+
+                    <div class="form-options">
+                        <label class="remember-me">
+                            <input type="checkbox" id="rememberMe">
+                            <span class="checkmark"></span>
+                            Remember for 30 days
+                        </label>
+                        <a href="f-password.html" class="forgot-link">Forgot password?</a>
+                    </div>
+
+                    <button type="submit" class="btn-primary">Login</button>
+
+                    <div class="toggle-text">
+                        Don't have an account?<a href="#" id="toRegister">Sign up</a>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Register Box -->
+            <div class="form-box register-box">
+                <form id="registerForm" onsubmit="event.preventDefault();">
+                    <div class="header-wrapper">
+                        <div class="header-icon">✨</div>
+                        <h2>Create account</h2>
+                        <p class="subtitle">Enter your details to get started.</p>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="text" id="registerName" placeholder="Name" required autocomplete="name">
+                        <i class="fa-regular fa-user input-icon"></i>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="email" id="registerEmail" placeholder="Email" required autocomplete="email">
+                        <i class="fa-regular fa-envelope input-icon"></i>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="password" id="registerPassword" placeholder="Password" required autocomplete="new-password">
+                        <i class="fa-regular fa-eye-slash password-toggle" id="registerPasswordToggle"></i>
+                    </div>
+
+                    <div class="form-options">
+                        <label class="remember-me">
+                            <input type="checkbox" id="termsAgreement" required>
+                            <span class="checkmark"></span>
+                            I agree to the Terms & Conditions
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn-primary">Sign Up</button>
+
+                    <div class="toggle-text">
+                        Already have an account?<a href="#" id="toLogin">Login</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Illustration Panel (Floating Card) -->
+        <div class="illustration-container">
+            <div class="illustration-card"></div>
+        </div>
+    </div>
+
+    <script>
+        const container = document.getElementById('container');
+        const toRegister = document.getElementById('toRegister');
+        const toLogin = document.getElementById('toLogin');
+
+        toRegister.addEventListener('click', (e) => {
+            e.preventDefault();
+            container.classList.add("active");
+        });
+
+        toLogin.addEventListener('click', (e) => {
+            e.preventDefault();
+            container.classList.remove("active");
+        });
+
+        // Toggle Login Password Visibility
+        const loginPassword = document.getElementById('loginPassword');
+        const loginPasswordToggle = document.getElementById('loginPasswordToggle');
+
+        loginPasswordToggle.addEventListener('click', () => {
+            const isPassword = loginPassword.type === 'password';
+            loginPassword.type = isPassword ? 'text' : 'password';
+            loginPasswordToggle.classList.toggle('fa-eye-slash', !isPassword);
+            loginPasswordToggle.classList.toggle('fa-eye', isPassword);
+        });
+
+        // Toggle Register Password Visibility
+        const registerPassword = document.getElementById('registerPassword');
+        const registerPasswordToggle = document.getElementById('registerPasswordToggle');
+
+        registerPasswordToggle.addEventListener('click', () => {
+            const isPassword = registerPassword.type === 'password';
+            registerPassword.type = isPassword ? 'text' : 'password';
+            registerPasswordToggle.classList.toggle('fa-eye-slash', !isPassword);
+            registerPasswordToggle.classList.toggle('fa-eye', isPassword);
+        });
+    </script>
+</body>
+
+</html>
